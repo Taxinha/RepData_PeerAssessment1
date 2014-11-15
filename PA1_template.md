@@ -9,7 +9,8 @@ keep_md: true
 ## Loading and preprocessing the data
 
 ### Loading Libraries, defining variables and set location to US
-```{r}
+
+```r
 library(dplyr)
 
 fileURL      <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
@@ -21,7 +22,8 @@ localFile    <- "./data/activity.csv"
 ```
 
 ### Helper functions
-```{r}
+
+```r
 ## Download and Extract Zip data file
 downloadAndExtractZipFile <- function(){
   ## check if the data folder exists
@@ -54,10 +56,18 @@ readCSVFile <- function(fileName, ...){
 ```
 
 ### Load the data (unzip and download if needed)
-```{r}
+
+```r
 downloadAndExtractZipFile()
 
 data <- readCSVFile(localFile)
+```
+
+```
+## [1] "Reading file  ./data/activity.csv"
+```
+
+```r
 ## summary(data)
 ```
 
@@ -66,8 +76,8 @@ data <- readCSVFile(localFile)
 ## What is mean total number of steps taken per day?
 
 ### A histogram of the total number of steps taken each day
-```{r}
 
+```r
 numSteps <- data %>%
    filter(!is.na(steps)) %>%
     group_by(date) %>%
@@ -78,20 +88,33 @@ hist(x = numSteps$totalSteps, freq = TRUE,
      main = "")
 ```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
 ### Calculate and report the mean and median total number of steps taken per day
 #### Mean of total number of steps taken per day
-```{r}
+
+```r
 mean(numSteps$totalSteps)
 ```
+
+```
+## [1] 10766.19
+```
 #### Median of total number of steps taken per day
-```{r}
+
+```r
 median(numSteps$totalSteps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
 ### A time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
-```{r}
+
+```r
 daily <- data %>%
   filter(!is.na(steps)) %>%
   group_by(interval) %>%
@@ -102,26 +125,39 @@ plot(x = daily$interval, y = daily$av, type = "l", main = "",
      ylab = "Average of steps taken")
 ```
 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+
 ### Which 5-minute interval, on average across all the days in the dataset, 
 contains the maximum number of steps?
-```{r}
+
+```r
 daily$interval[daily$av == max(daily$av)]
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 
 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r}
+
+```r
 nas <- data %>%
   filter(is.na(steps))
 
 nrow(nas)
 ```
 
+```
+## [1] 2304
+```
+
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-```{r}
+
+```r
 ##Mean steps per day ignoring NAs
 meanStepsDay <- data %>%
   filter(!is.na(steps)) %>%
@@ -130,14 +166,38 @@ meanStepsDay <- data %>%
 ```
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
-```{r}
+
+```r
 newData <- data
 newData$steps[is.na(newData$steps)] <- 
   meanStepsDay$mean[match(meanStepsDay$date, newData$date)]##[is.na(df$value)]
+```
+
+```
+## Warning in newData$steps[is.na(newData$steps)] <-
+## meanStepsDay$mean[match(meanStepsDay$date, : number of items to replace is
+## not a multiple of replacement length
+```
+
+```r
 ##newData <- merge(y = newData, x = meanStepsDay)
 ##newData2 <- ddply(newData, .(date), transform, steps=ifelse(is.na(steps), meanStepsDay$mean[meanStepsDay$date == date], steps))
 
 newData$steps[is.na(newData$steps)] <- meanStepsDay$steps[meanStepsDay$date == newData$date]
+```
+
+```
+## Warning in is.na(e1) | is.na(e2): longer object length is not a multiple
+## of shorter object length
+```
+
+```
+## Warning in `==.default`(meanStepsDay$date, newData$date): longer object
+## length is not a multiple of shorter object length
+```
+
+```
+## Error in newData$steps[is.na(newData$steps)] <- meanStepsDay$steps[meanStepsDay$date == : replacement has length zero
 ```
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
