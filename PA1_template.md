@@ -226,11 +226,12 @@ median(newNumSteps$totalSteps)
 ```
 
 ### Do these values differ from the estimates from the first part of the assignment? 
-The results differ from the first histogram because we replace all the NAs by the mean per interval 
-and the first histogram "ignore" the NAs
+Yes, the values differ.
 
 ### What is the impact of imputing missing data on the estimates of the total daily number of steps?
-No idea :S
+The results differ from the first histogram because we replace all the NAs by the mean per interval 
+and the first histogram the NAs values were "ignored".
+The mean is the same since we use the mean values to fill the NAs, but the median changed slightly.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
